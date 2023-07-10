@@ -13,9 +13,9 @@ library(ggtree)
 ```
 ## Tree import
 Most tree viewer software (including R packages) focus on Newick and Nexus file formats. ```ggtree``` supports several file formats including: Newick, Nexus, Phylip, Jplace, and New Hampshire eXtended format(NHX). The ```ggtree``` package implements several parser functions, including:
-    ```read.tree``` for reading Newick files.
-    ```read.phylip``` for reading Phylip files.
-    ```read.jplace``` for reading Jplace files.
+    *```read.tree``` for reading Newick files.
+    *```read.phylip``` for reading Phylip files.
+    *```read.jplace``` for reading Jplace files.
     ```read.nhx``` for reading NHX files.
     ```read.beast``` for parsing output of BEAST
     ```read.codeml``` for parsing output of CODEML (rst and mlc files)
