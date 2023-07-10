@@ -96,18 +96,132 @@ Some of the functions in ggtree for annotating clades need a parameter specifyin
 ggtree(tree)+
     geom_text(aes(label = node), hjust = -.3)
 ```
-Another way to get the internal node number is using ```MRCA()``` function by providing a vector of taxa names (created using ```c("taxon1", "taxon2")```).. The function will return node number of input taxa’s most recent commond ancestor (MRCA). First, re-create the plot so you can choose which taxa you want to grab the MRCA from.
+### Labeling Clades
+To label clades, use ```geom_cladelabel()```. This will add another geom layer to annotate a selected clade with a bar indicating the clade with a corresponding label. You select the clades using the internal node number for the node that connects all the taxa in that clade.
+
+Let's annotate the clade with the most recent common ancestor between taxa C and E (internal node 17). Let's make the annotation red. See ```?geom_cladelabel`` help for more.
+```
+ggtree(tree) + 
+  geom_cladelabel(node=17, label="Some random clade", color="red")
+```
+Add another label for the clade connecting taxa G and H (internal node 21)
+```
+ggtree(tree) + 
+  geom_tiplab() + 
+  geom_cladelabel(node=17, label="Some random clade", 
+                  color="red2", offset=.8) + 
+  geom_cladelabel(node=21, label="A different clade", 
+                  color="blue", offset=.8)
+```
+If you notice on the plots that were just generated, there were some problems. First, the labels would look a lot better if they were aligned. To fix this pass ```align=TRUE``` to ```geom_cladelabel()```. Now the labels are falling off the edge of the plot. This is because ```geom_cladelabel()``` is just adding this layer onto the end of the existing canvas that was originally layed out in the ggtree call. This default layout tried to optimize by plotting the entire tree over the entire region of the plot. Here is how to fix this:
 ```
 ggtree(tree)+
-    geom_tiplab()
+    geom_tiplab()+
+    geom_cladelabel(node=17, label="Some random clade", 
+                  color="red2", offset=.8) + 
+    geom_cladelabel(node=21, label="A different clade", 
+                  color="blue", offset=.8)+
+    theme_tree2()+
+    xlim(0,70)+
+    theme_tree()
 ```
-Now lets grab the most recent common anestory from taxa C + E and taxa G + H. Use ``` MRCA()``` to get the internal node numbers. To confirm, go back and look at the node-labeled plot.
+Using ```theme_tree2()`` will add a scale to the x-axis showing the genetic distance. We need to set the limits of the x-axis and the following link will show you how to add in ```xlim()``(<https://stackoverflow.com/questions/3606697/how-to-set-limits-for-axes-in-ggplot2-r-plots). Adding ```theme_tree()``` at the end will override the original theme that was set at the beginning and remove the scale.
+
+Instead of labeling you could highlight the entire clade with ```geom_highlight()```
 ```
-MRCA(tree, tip=c("C", "E"))
-MRCA(tree, tip=c("G", "H"))
+ggtree(tree) + 
+  geom_tiplab() + 
+  geom_hilight(node=17, fill="gold") + 
+  geom_hilight(node=21, fill="purple")
 ```
-You should have gotten 17 for C and E and 21 for G and H. 
-### Labeling Clades
 ### Connecting Taxa
+Some evolutionary events (e.g. reassortment, horizontal gene transfer) can be visualized with some simple annotations on a tree. The ```geom_taxalink()``` layer draws straight or curved lines between any of two nodes in the tree, allow it to show evolutionary events by connecting taxa.
+```
+ggtree(tree) + 
+  geom_tiplab() + 
+  geom_taxalink("E", "H", color="blue3") +
+  geom_taxalink("C", "G", color="orange2", curvature=-.9)
+```
 ### Practice
-## Advanced Tree Annotation
+Let's combine everything that we just covered into one nice plot
+```
+ggtree(tree)+
+    geom_tiplab()+
+    geom_highlight(node=19, fill="pink")+
+    geom_highlight(node=23, fill="steelblue")+
+    geom_taxalink("C", "E", color="grey", linetype=2) +
+    geom_taxalink("G", "J", color="grey", linetype=2, curvature=-.9)+
+    theme_tree2()
+```
+You can go back to ```ggtree(...)``` to change the layout of this plot
+## Advanced Tree Annotation and More Trees!!!
+The following are examples of advanced tree annotations and a variety of other trees that you can make. Following each each, brief explanations of specific commands will be provided. Each example uses different datasets that you can find linked in this repository
+```
+#read/import the data
+beast <- read.beast("<<<Where you have the flu_tree_beast.tree file stored>>>"
+
+# supply a most recent sampling date so you get the dates
+# and add a scale bar
+ggtree(beast, mrsd="2013-01-01") + 
+  theme_tree2() 
+
+# Finally, add tip labels and adjust axis
+ggtree(beast, mrsd="2013-01-01") + 
+  theme_tree2() + 
+  geom_tiplab(align=TRUE, linesize=.5) + 
+  xlim(1990, 2020)
+```
+### msaplot
+This puts the multiple sequence alignment and the tree side-by-side. The function takes a tree object (produced with ggtree()) and the path to the FASTA multiple sequence alignment. You can do it with the entire MSA, or you could restrict to just a window. You can change the coordinate system of the plot itself by passing ``` + coord_polar(theta = "y")``` to the end of the command.
+```
+flu <- read.fasta("<<<Where you have the fdata/flu_aasequence.fasta file stored>>>"
+
+msaplot(p=ggtree(beast), fasta="data/flu_aasequence.fasta", window=c(150, 175))
+```
+### Many Trees
+ggtree will let you plot many trees at once, and you can facet them the normal ggplot2 way. Let’s generate 3 replicates each of 4 random trees with 10, 25, 50, and 100 tips, plotting them all.
+```
+set.seed(42)
+trees <- lapply(rep(c(10, 25, 50, 100), 3), rtree)
+class(trees) <- "multiPhylo"
+ggtree(trees) + facet_wrap(~.id, scale="free", ncol=4) + ggtitle("Many trees. Such phylogenetics. Wow.")
+```
+### Plot tree with other data
+For showing a phylogenetic tree alongside other panels with your own data, the facet_plot() function accepts a input data.frame and a geom function to draw the input data.
+```
+# Generate a random tree with 30 tips
+tree <- rtree(30)
+
+# Make the original plot
+p <- ggtree(tree)
+
+# generate some random values for each tip label in the data
+d1 <- data.frame(id=tree$tip.label, val=rnorm(30, sd=3))
+
+# Make a second plot with the original, naming the new plot "dot", 
+# using the data you just created, with a point geom.
+p2 <- facet_plot(p, panel="dot", data=d1, geom=geom_point, aes(x=val), color='red3')
+
+# Make some more data with another random value.
+d2 <- data.frame(id=tree$tip.label, value = abs(rnorm(30, mean=100, sd=50)))
+
+# Now add to that second plot, this time using the new d2 data above, 
+# This time showing a bar segment, size 3, colored blue.
+p3 <- facet_plot(p2, panel='bar', data=d2, geom=geom_segment, 
+           aes(x=0, xend=value, y=y, yend=y), size=3, color='blue4') 
+
+# Show all three plots with a scale
+p3 + theme_tree2()
+```
+### Overlay Organism Silouhettes
+phylopic.org hosts free silhouette images of animals, plants, and other life forms, all under Creative Commons or Public Domain. You can use ggtree to overlay a phylopic image on your plot at a node of your choosing. Let’s show some gram-negative bacteria over the whole plot, and put a Homo sapiens and a dog on those clades we’re working with.
+```
+read.tree("data/tree_newick.nwk") %>% 
+  ggtree() %>% 
+  phylopic("ba0a446e-18d7-4db9-9937-5adec24721b5", 
+           color="gold2", alpha = .25) %>% 
+  phylopic("c089caae-43ef-4e4e-bf26-973dd4cb65c5", 
+           color="purple3", alpha = .5, node=17) %>% 
+  phylopic("6c9cb19d-1d8a-4215-88ba-d49cd4917a5e", 
+           color="purple3", alpha = .5, node=21)
+```
