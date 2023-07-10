@@ -171,13 +171,6 @@ ggtree(beast, mrsd="2013-01-01") +
   geom_tiplab(align=TRUE, linesize=.5) + 
   xlim(1990, 2020)
 ```
-### msaplot
-This puts the multiple sequence alignment and the tree side-by-side. The function takes a tree object (produced with ggtree()) and the path to the FASTA multiple sequence alignment. You can do it with the entire MSA, or you could restrict to just a window. You can change the coordinate system of the plot itself by passing ``` + coord_polar(theta = "y")``` to the end of the command.
-```
-flu <- read.fasta("<<<Where you have the fdata/flu_aasequence.fasta file stored>>>"
-
-msaplot(p=ggtree(beast), fasta="data/flu_aasequence.fasta", window=c(150, 175))
-```
 ### Many Trees
 ggtree will let you plot many trees at once, and you can facet them the normal ggplot2 way. Let’s generate 3 replicates each of 4 random trees with 10, 25, 50, and 100 tips, plotting them all.
 ```
@@ -216,12 +209,12 @@ p3 + theme_tree2()
 ### Overlay Organism Silouhettes
 phylopic.org hosts free silhouette images of animals, plants, and other life forms, all under Creative Commons or Public Domain. You can use ggtree to overlay a phylopic image on your plot at a node of your choosing. Let’s show some gram-negative bacteria over the whole plot, and put a Homo sapiens and a dog on those clades we’re working with.
 ```
-read.tree("data/tree_newick.nwk") %>% 
-  ggtree() %>% 
+read.tree("__File path___")
+  ggtree(tree) +
   phylopic("ba0a446e-18d7-4db9-9937-5adec24721b5", 
-           color="gold2", alpha = .25) %>% 
+           color="gold2", alpha = .25) +
   phylopic("c089caae-43ef-4e4e-bf26-973dd4cb65c5", 
-           color="purple3", alpha = .5, node=17) %>% 
+           color="purple3", alpha = .5, node=17) +
   phylopic("6c9cb19d-1d8a-4215-88ba-d49cd4917a5e", 
            color="purple3", alpha = .5, node=21)
 ```
