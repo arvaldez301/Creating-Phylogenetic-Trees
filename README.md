@@ -88,10 +88,25 @@ ggtree(tree)+
   geom_tippoint(shape = 18)+
   geom_nodepoint(color = "yellow", alpha = 1)
 ```
-## Tree Anotation
+## Tree Annotation
 The ```geom_tiplab()``` function adds some very basic annotation. The following sections will cover more advanced annotation.
-
 ### Internal Node Number
+Some of the functions in ggtree for annotating clades need a parameter specifying the internal node number. To get the internal node number, use ```geom_text``` to display it, where the label is an aesthetic mapping to the "node variable" stored inside the tree object. Using the ```hjust``` option helps so that the labels are not sitting right on top of the nodes.
+```
+ggtree(tree)+
+    geom_text(aes(label = node), hjust = -.3)
+```
+Another way to get the internal node number is using ```MRCA()``` function by providing a vector of taxa names (created using ```c("taxon1", "taxon2")```).. The function will return node number of input taxa’s most recent commond ancestor (MRCA). First, re-create the plot so you can choose which taxa you want to grab the MRCA from.
+```
+ggtree(tree)+
+    geom_tiplab()
+```
+Now lets grab the most recent common anestory from taxa C + E and taxa G + H. Use ``` MRCA()``` to get the internal node numbers. To confirm, go back and look at the node-labeled plot.
+```
+MRCA(tree, tip=c("C", "E"))
+MRCA(tree, tip=c("G", "H"))
+```
+You should have gotten 17 for C and E and 21 for G and H. 
 ### Labeling Clades
 ### Connecting Taxa
 ### Practice
