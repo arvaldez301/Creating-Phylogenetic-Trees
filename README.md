@@ -13,7 +13,8 @@ library(ggtree)
 ```
 ## Tree import
 Most tree viewer software (including R packages) focus on Newick and Nexus file formats. ```ggtree``` supports several file formats including: Newick, Nexus, Phylip, Jplace, and New Hampshire eXtended format(NHX). The ```ggtree``` package implements several parser functions, including:
-    * ```read.tree``` for reading Newick files.
+
+    ```read.tree``` for reading Newick files.
     ```read.phylip``` for reading Phylip files.
     ```read.jplace``` for reading Jplace files.
     ```read.nhx``` for reading NHX files.
@@ -88,6 +89,8 @@ ggtree(tree)+
   geom_nodepoint(color = "yellow", alpha = 1)
 ```
 ## Tree Anotation
+The ```geom_tiplab()``` function adds some very basic annotation. The following sections will cover more advanced annotation.
+
 ### Internal Node Number
 ### Labeling Clades
 ### Connecting Taxa
