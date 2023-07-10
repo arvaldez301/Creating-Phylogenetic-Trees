@@ -51,7 +51,7 @@ ggtree(tree) + geom_treescale()
 # or add the entire scale to the x axis with theme_tree2()
 ggtree(tree) + theme_tree2()
 ```
-The default is to plot a phylogram, where the x-axis shows the genetic change / evolutionary distance. If you want to disable scaling and produce a cladogram instead, set the ```branch.length="none"``` option inside the ```ggtree()``` call. See ```?ggtree``` for more. The ```...``` option in the help for ?ggtree represents additional options that are further passed to ```ggplot()```. You can use this to change aesthetics of the plot. Let’s draw a cladogram (no branch scaling) using thick blue dotted lines (note that I’m not mapping these aesthetics to features of the data with ```aes()``` – we’ll get to that later).
+The default is to plot a phylogram, where the x-axis shows the genetic change / evolutionary distance. If you want to disable scaling and produce a cladogram instead, set the ```branch.length="none"``` option inside the ```ggtree()``` call. See ```?ggtree``` for more. The ```...``` option in the help for ```?ggtree``` represents additional options that are further passed to ```ggplot()```. You can use this to change aesthetics of the plot. Let’s draw a cladogram (no branch scaling) using thick blue dotted lines (note that I’m not mapping these aesthetics to features of the data with ```aes()``` – we’ll get to that later).
 ```
 #Disable scaling
 ggtree(tree, branch.length="none")
@@ -125,7 +125,7 @@ ggtree(tree)+
     xlim(0,70)+
     theme_tree()
 ```
-Using ```theme_tree2()`` will add a scale to the x-axis showing the genetic distance. We need to set the limits of the x-axis and the following link will show you how to add in ```xlim()``(<https://stackoverflow.com/questions/3606697/how-to-set-limits-for-axes-in-ggplot2-r-plots). Adding ```theme_tree()``` at the end will override the original theme that was set at the beginning and remove the scale.
+Using ```theme_tree2()``` will add a scale to the x-axis showing the genetic distance. We need to set the limits of the x-axis and the following link will show you how to add in ```xlim()```(<https://stackoverflow.com/questions/3606697/how-to-set-limits-for-axes-in-ggplot2-r-plots). Adding ```theme_tree()``` at the end will override the original theme that was set at the beginning and remove the scale.
 
 Instead of labeling you could highlight the entire clade with ```geom_highlight()```
 ```
