@@ -209,12 +209,27 @@ p3 + theme_tree2()
 ### Overlay Organism Silouhettes
 phylopic.org hosts free silhouette images of animals, plants, and other life forms, all under Creative Commons or Public Domain. You can use ggtree to overlay a phylopic image on your plot at a node of your choosing. Let’s show some gram-negative bacteria over the whole plot, and put a Homo sapiens and a dog on those clades we’re working with.
 ```
-read.tree("__File path___")
-  ggtree(tree) +
-  phylopic("ba0a446e-18d7-4db9-9937-5adec24721b5", 
-           color="gold2", alpha = .25) +
-  phylopic("c089caae-43ef-4e4e-bf26-973dd4cb65c5", 
-           color="purple3", alpha = .5, node=17) +
-  phylopic("6c9cb19d-1d8a-4215-88ba-d49cd4917a5e", 
-           color="purple3", alpha = .5, node=21)
+# Install and Load libraries
+library(ggtree)
+library(ggimage)
+
+# Read tree data
+tree <- read.tree("<<<file path>>>")
+
+# Create a data frame with information about the organisms and their corresponding images
+organism_data <- data.frame(
+  organism = c("Organism1", "Organism2", "Organism3"),
+  image_path = c("path/to/image1.png", "path/to/image2.png", "path/to/image3.png"),
+  stringsAsFactors = FALSE
+)
+
+# Associate the image data with the tip labels in the tree
+tip_data <- data.frame(label = tree$tip.label, stringsAsFactors = FALSE)
+tip_data <- merge(tip_data, organism_data, by.x = "label", by.y = "organism", all.x = TRUE)
+
+# Create the ggtree object and add the images
+ggtree(tree)+
+  geom_tiplab(data = tip_data, aes(image = image_path, label = label), geom = "image", size = 0.5)+
+# Adjust the plot appearance
+  theme_tree2() + theme(legend.position = "none")
 ```
